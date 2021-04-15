@@ -26,7 +26,7 @@ export CONFIGPATH=${CONFIGPATH:-"${CC_REPO_DIR}/deploy_config.json"}
 export CHAINCODEPATH=${CHAINCODEPATH:-"$CC_REPO_DIR/chaincode"}
 
 # hlf dir
-export HLF_VERSION=${HLF_VERSION:="1.4.4"}
+export HLF_VERSION=${HLF_VERSION:="2.x"}
 export FABRIC_SRC_DIR=${ROOTDIR}/fabric-${HLF_VERSION}
 
 # fabric-cli dir
