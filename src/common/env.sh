@@ -14,6 +14,7 @@ export GOROOT=${ROOTDIR}/go
 export PATH=${GOROOT}/bin:$PATH
 export GOPATH=${ROOTDIR}
 export PATH=${GOPATH}/bin:$PATH
+export ENABLE_PEER_CLI=true
 
 # set location for python installation
 export PYTHON_VERSION=${PYTHON_VERSION:="2.7.15"}
@@ -24,9 +25,10 @@ export CC_REPO_DIR=${CC_REPO_DIR:-"${ROOTDIR}/chaincode-repo"}
 export CONFIGPATH=${CONFIGPATH:-"${CC_REPO_DIR}/deploy_config.json"}
 # - only for golang chaincode projects
 export CHAINCODEPATH=${CHAINCODEPATH:-"$CC_REPO_DIR/chaincode"}
-
+echo "HLF_VERSION before : $HLF_VERSION"
 # hlf dir
 export HLF_VERSION=${HLF_VERSION:="2.x"}
+echo "HLF_VERSION after : $HLF_VERSION"
 export FABRIC_SRC_DIR=${ROOTDIR}/fabric-${HLF_VERSION}
 
 # fabric-cli dir
@@ -34,6 +36,7 @@ export FABRIC_CLI_DIR=$ROOTDIR/${FABRIC_CLI_DIR:="/fabric-cli"}
 
 ## Fabric V2.x Env setup
 if [[ $HLF_VERSION == "2."* && $ENABLE_PEER_CLI == 'true' ]];then
+    echo " checking peerclie trie or not"
     echo "-------- Installing jq --------"
     install_jq
 

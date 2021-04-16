@@ -50,7 +50,7 @@ function install_jq {
 #   None
 #######################################
 function install_fabric_bin {
-    local FAB_VERSION=${1:-"2.1.1"}
+    local FAB_VERSION=${1:-"2.2.1"}
     local CA_VERSION=${2:-"1.4.9"}
 
     #TODO make version dynamic
