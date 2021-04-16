@@ -35,10 +35,10 @@ mkdir -p "${GOSOURCE}/github.com/hyperledger/"
 mv "${FABRIC_SRC_DIR}" "${GOSOURCE}/github.com/hyperledger/fabric"
 
 
-echo "======== Building fabric-cli tool ========"
-cd "${FABRIC_CLI_DIR}" || exit 1
-npm install
-npm run build
+#echo "======== Building fabric-cli tool ========"
+#cd "${FABRIC_CLI_DIR}" || exit 1
+#npm install
+#npm run build
 
 
 echo "======== Building chaincode ========"
