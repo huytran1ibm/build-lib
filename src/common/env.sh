@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+source "${SCRIPT_DIR}/common/utils.sh"
 ROOTDIR=${ROOTDIR:=$(pwd)}
 
 export DEBUG=${DEBUG:=false}
