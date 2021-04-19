@@ -15,7 +15,7 @@ source "${SCRIPT_DIR}/common/blockchain.sh"
 
 verifyPeerEnv
 ## Need to remove the danm node_modules
-rm -rf "${CC_REPO_DIR}/node_modules"
+# rm -rf "${CC_REPO_DIR}/node_modules"
 
 # Find an existing cc namespace
 queryCommitted
@@ -31,11 +31,11 @@ echo "LATEST_SEQ=${LATEST_SEQ}" >> build.properties
 export CC_SEQUENCE=${CC_SEQUENCE_OVERRIDE:-$(expr $LATEST_SEQ + 1)}
 
 # Update package.json cc name and version
-cd "${CC_REPO_DIR}"
-npm version prerelease --preid="${CC_VERSION}"
-cd -
+#cd "${CC_REPO_DIR}"
+#npm version prerelease --preid="${CC_VERSION}"
+#cd -
 
-packageCC "${CC_REPO_DIR}" "${CC_NAME}" "${CC_VERSION}" "${CC_SEQUENCE}" "node"
+packageCC "${CC_REPO_DIR}" "${CC_NAME}" "${CC_VERSION}" "${CC_SEQUENCE}" "go"
 
 if [[ ! -f "${CC_NAME}@${CC_VERSION}.tgz" ]];then
     fatalln "${CC_NAME}@${CC_VERSION}.tgz not created by packageCC"
