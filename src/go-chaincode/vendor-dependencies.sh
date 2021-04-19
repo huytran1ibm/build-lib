@@ -7,10 +7,6 @@ $DEBUG && set -ex
 
 # Install govendor
 go get -u github.com/kardianos/govendor
-go mod init
-go test 
-go mod tidy
-go mod vendor
 
 #######################################
 # Parses deployment configuration -> for each organization and chaincode component,
