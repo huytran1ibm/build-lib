@@ -119,6 +119,46 @@ installChaincode_v2() {
     done
 }
 
+
+#######################################
+# V1.x Upgrades the chiancode if the chaincode is instantiated
+#TODO
+# Globals:
+#   CORE_PEER_ADDRESS: peer address to install
+# Arguments:
+#   - $1: CC_PACKAGE: Package of CC
+# Returns:
+#   None
+#######################################
+instantiate_peer_cli() {
+
+  for ord in ${orderers[@]};do
+    ## Check for instantiated, if instantiated, only upgrade
+    if [[ `peer chaincode list --instantiated -C $CHANNEL_NAME` == *${CC_NAME}* ]];then
+      echo "instnatiated"
+      peer chaincode upgrade -o ${ord} --tls --cafile "${ORDERER_PEM}" \
+        --channelID $CHANNEL_NAME \
+        --name ${CC_NAME}  \
+        --version ${CC_VERSION} \
+        ${CC_PDC_CONFIG} ${CC_ENDORSEMENT_OPTION} ${ENDORSEMENT_POLICY} ${CC_INIT_ARGS_OPTION} "${INIT_ARGS}"
+        res=$?
+    else
+      peer chaincode instantiate -o ${ord} --tls --cafile "${ORDERER_PEM}" \
+        --channelID $CHANNEL_NAME \
+        --name ${CC_NAME}  \
+        --version ${CC_VERSION} \
+        ${CC_PDC_CONFIG} ${CC_ENDORSEMENT_OPTION} ${ENDORSEMENT_POLICY} ${CC_INIT_ARGS_OPTION} "${INIT_ARGS}"
+        res=$?
+    fi
+
+    verifyResult $res "Chaincode definition instantiation on ${CORE_PEER_ADDRESS} on channel '$CHANNEL_NAME'"
+    if [[ $res == 0 ]];then
+        break
+    fi
+
+  done
+}
+
 #######################################
 # V2.x Query Installed chaincode on peer(s) provided specified parameters
 # Requires peer cli env and msp to be set
