@@ -11,7 +11,7 @@ export NVM_VERSION=${NVM_VERSION:="0.35.1"}
 
 # set location for go executables
 export GO_VERSION=${GO_VERSION:="1.13"}
-export GOROOT=${GOROOT:-"${ROOTDIR}/go"}
+export GOROOT=${ROOTDIR}/go
 export PATH=${GOROOT}/bin:$PATH
 export GOPATH=${GOPATH:-"${ROOTDIR}/go"}
 export PATH=${GOPATH}/bin:$PATH
@@ -36,8 +36,8 @@ export FABRIC_SRC_DIR=${ROOTDIR}/fabric-${HLF_VERSION}
 export FABRIC_CLI_DIR=$ROOTDIR/${FABRIC_CLI_DIR:="/fabric-cli"}
 
 ## Fabric V2.x Env setup
-if [[ $HLF_VERSION == "1."* && $ENABLE_PEER_CLI == 'true' ]] || [[ $HLF_VERSION == "2."* && $ENABLE_PEER_CLI == 'true' ]];then
-    if [[ $DEBUG == 'true' ]];then set -x; fi;
+if [[ $HLF_VERSION == "2."* && $ENABLE_PEER_CLI == 'true' ]];then
+    echo " checking peerclie trie or not"
     echo "-------- Installing jq --------"
     install_jq
 
@@ -116,7 +116,7 @@ if [[ $HLF_VERSION == "1."* && $ENABLE_PEER_CLI == 'true' ]] || [[ $HLF_VERSION 
         echo $peerObj | jq -r '.pem' > ${peerPemFile}
         # create map
         peersMap["${peerUrl}"]=$(pwd)/${peerPemFile}
-    done < <(echo "${CONNECTION_PROFILE_STRING}" | jq -rc '.[0] | .peers | keys[] as $k | {"url": "\(.[$k] | .url)" , "pem": "\(.[$k] | .tlsCACerts.pem)"}')
+    done < <(echo ${CONNECTION_PROFILE_STRING} | jq -rc '.[0] | .peers | keys[] as $k | {"url": "\(.[$k] | .url)" , "pem": "\(.[$k] | .tlsCACerts.pem)"}')
     export peersMap
 
     ## Build the peer string for peer cli
@@ -127,23 +127,19 @@ if [[ $HLF_VERSION == "1."* && $ENABLE_PEER_CLI == 'true' ]] || [[ $HLF_VERSION 
 
     # Note: chaincode level shouldn't be array as deploy_config.json is a specific chaincode configuration for distinct source code deployment
     # TODO Allow CC_NAME override at pipeline
-    if [[ ! -z "${CC_NAME_OVERRIDE}" ]];then
-        CC_NAME=${CC_NAME_OVERRIDE}
-    else
-        CC_NAME=$(cat $CONFIGPATH | jq -r --argjson cc_index $CC_INDEX '. | .. | .chaincode? | .[$cc_index] | .name | select(.)')
-    fi
+    CC_NAME=$(cat $CONFIGPATH | jq -r '. | .. | .chaincode? | .[0] | .name | select(.)')
 
-    json_version=$(cat $CONFIGPATH | jq -r --argjson cc_index $CC_INDEX  '. | .. | .chaincode? | .[$cc_index] | .version? | select(.)')
+    json_version=$(cat $CONFIGPATH | jq -r '. | .. | .chaincode? | .[0] | .version? | select(.)')
     if [[ $json_version != null && $json_version != "" ]]; then
         CC_VERSION=$json_version
     else
         CC_VERSION="${CC_VERSION_OVERRIDE:-latest}"
     fi
     #TODO enable multiple channel
-    CHANNEL_NAME=$(cat $CONFIGPATH | jq -r --argjson cc_index $CC_INDEX  '. | .. | .chaincode? | .[$cc_index] | .channel | select(.)')
+    CHANNEL_NAME=$(cat $CONFIGPATH | jq -r '. | .. | .chaincode? | .[0] | .channel | select(.)')
 
     ##PDC
-    pdc_json_path=$(cat $CONFIGPATH | jq -r --argjson cc_index $CC_INDEX  '. | .. | .chaincode? | .[$cc_index] | .pdc_path? | select(.)')
+    pdc_json_path=$(cat $CONFIGPATH | jq -r '. | .. | .chaincode? | .[0] | .pdc_path? | select(.)')
 
     if [[ $pdc_json_path != null && $pdc_json_path != "" ]]; then
         CC_PDC_CONFIG="--collections-config ${CC_REPO_DIR}/${pdc_json_path}"
