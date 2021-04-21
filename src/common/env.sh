@@ -11,9 +11,9 @@ export NVM_VERSION=${NVM_VERSION:="0.35.1"}
 
 # set location for go executables
 export GO_VERSION=${GO_VERSION:="1.12"}
-export GOROOT=${GOROOT:-"${ROOTDIR}/go"}
+export GOROOT=${ROOTDIR}/go
 export PATH=${GOROOT}/bin:$PATH
-export GOPATH=${GOPATH:-"${ROOTDIR}/go"}
+export GOPATH=${ROOTDIR}
 export PATH=${GOPATH}/bin:$PATH
 export ENABLE_PEER_CLI=true
 
@@ -78,16 +78,12 @@ if [[ $HLF_VERSION == "2."* && $ENABLE_PEER_CLI == 'true' ]];then
     ca=$(echo "${ADMIN_IDENTITY_STRING}" | jq -r '.ca')
     key=$(echo "${ADMIN_IDENTITY_STRING}" | jq -r '.private_key')
     name=$(echo "${ADMIN_IDENTITY_STRING}" | jq -r '.name')
-
-    source ${SCRIPT_DIR}/common/create_msp_from_identity.sh "${ROOTDIR}/${ADMIN_IDENTITY_NAME}" "${cert}" "${ca}" "${key}" "${name}"
+    ./${SCRIPT_DIR}/common/create_msp_from_identity.sh "${ROOTDIR}/${ADMIN_IDENTITY_NAME}" "${cert}" "${ca}" "${key}" "${name}"
 #    ./${SCRIPT_DIR}/common/create_msp_from_identity.sh "${ROOTDIR}/${ADMIN_IDENTITY_NAME}" "${cert}" "${key}" "${name}"
 
     # Download Fabric BIN and setup PEER's core.yaml for identity
-    install_fabric_bin "${HLF_VERSION}" "1.4.9" # ca 1.4.9 is latest
-    ## Check if dir exists
-    [[ ! -d "${ROOTDIR}/${ADMIN_IDENTITY_NAME}" ]] && exit 6
-
-    cp $(pwd)/config/core.yaml "${ROOTDIR}/${ADMIN_IDENTITY_NAME}/"
+    install_fabric_bin
+    cp $FABRIC_CFG_PATH/core.yaml "${ROOTDIR}/${ADMIN_IDENTITY_NAME}"
 
     #Extract env
     #Get Msp
@@ -116,7 +112,7 @@ if [[ $HLF_VERSION == "2."* && $ENABLE_PEER_CLI == 'true' ]];then
         echo $peerObj | jq -r '.pem' > ${peerPemFile}
         # create map
         peersMap["${peerUrl}"]=$(pwd)/${peerPemFile}
-    done < <(echo "${CONNECTION_PROFILE_STRING}" | jq -rc '.[0] | .peers | keys[] as $k | {"url": "\(.[$k] | .url)" , "pem": "\(.[$k] | .tlsCACerts.pem)"}')
+    done < <(echo ${CONNECTION_PROFILE_STRING} | jq -rc '.[0] | .peers | keys[] as $k | {"url": "\(.[$k] | .url)" , "pem": "\(.[$k] | .tlsCACerts.pem)"}')
     export peersMap
 
     ## Build the peer string for peer cli
@@ -127,23 +123,19 @@ if [[ $HLF_VERSION == "2."* && $ENABLE_PEER_CLI == 'true' ]];then
 
     # Note: chaincode level shouldn't be array as deploy_config.json is a specific chaincode configuration for distinct source code deployment
     # TODO Allow CC_NAME override at pipeline
-    if [[ ! -z "${CC_NAME_OVERRIDE}" ]];then
-        CC_NAME=${CC_NAME_OVERRIDE}
-    else
-        CC_NAME=$(cat $CONFIGPATH | jq -r --argjson cc_index $CC_INDEX '. | .. | .chaincode? | .[$cc_index] | .name | select(.)')
-    fi
+    CC_NAME=$(cat $CONFIGPATH | jq -r '. | .. | .chaincode? | .[0] | .name | select(.)')
 
-    json_version=$(cat $CONFIGPATH | jq -r --argjson cc_index $CC_INDEX  '. | .. | .chaincode? | .[$cc_index] | .version? | select(.)')
+    json_version=$(cat $CONFIGPATH | jq -r '. | .. | .chaincode? | .[0] | .version? | select(.)')
     if [[ $json_version != null && $json_version != "" ]]; then
         CC_VERSION=$json_version
     else
         CC_VERSION="${CC_VERSION_OVERRIDE:-latest}"
     fi
     #TODO enable multiple channel
-    CHANNEL_NAME=$(cat $CONFIGPATH | jq -r --argjson cc_index $CC_INDEX  '. | .. | .chaincode? | .[$cc_index] | .channel | select(.)')
+    CHANNEL_NAME=$(cat $CONFIGPATH | jq -r '. | .. | .chaincode? | .[0] | .channel | select(.)')
 
     ##PDC
-    pdc_json_path=$(cat $CONFIGPATH | jq -r --argjson cc_index $CC_INDEX  '. | .. | .chaincode? | .[$cc_index] | .pdc_path? | select(.)')
+    pdc_json_path=$(cat $CONFIGPATH | jq -r '. | .. | .chaincode? | .[0] | .pdc_path? | select(.)')
 
     if [[ $pdc_json_path != null && $pdc_json_path != "" ]]; then
         CC_PDC_CONFIG="--collections-config ${CC_REPO_DIR}/${pdc_json_path}"
@@ -157,22 +149,6 @@ if [[ $HLF_VERSION == "2."* && $ENABLE_PEER_CLI == 'true' ]];then
         export CC_SIGNATURE_OPTION=""
     else
         export CC_SIGNATURE_OPTION=--signature-policy
-    fi
-
-    ## Endorsement policy should be defined at cicd by admin
-    if [[ -z $ENDORSEMENT_POLICY ]];then
-        ENDORSEMENT_POLICY=""
-        export CC_ENDORSEMENT_OPTION=""
-    else
-        export CC_ENDORSEMENT_OPTION=--policy
-    fi
-
-    ## Init Constructor if needed
-    if [[ -z $INIT_ARGS ]];then
-        INIT_ARGS=""
-        export CC_INIT_ARGS_OPTION=""
-    else
-        export CC_INIT_ARGS_OPTION=--ctor
     fi
 
     export CC_PDC_CONFIG=${CC_PDC_CONFIG}

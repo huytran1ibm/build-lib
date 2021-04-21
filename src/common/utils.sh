@@ -3,15 +3,10 @@
 # Common utility functions, e.g. to make curl requests
 
 ## Logging helpers
-if curl --head --silent --fail "https://raw.githubusercontent.com/hyperledger/fabric-samples/master/test-network/scripts/utils.sh" 2> /dev/null;then
-  # redo for non bash shells
-  curl -sSL "https://raw.githubusercontent.com/hyperledger/fabric-samples/master/test-network/scripts/utils.sh" -o fab-sample-utils.sh
-  chmod +x fab-sample-utils.sh
-  pwd
-  find fab-sample-utils.sh
-  TMP_FILE=$(pwd)/fab-sample-utils.sh
-  source "${TMP_FILE}"
-else
+if curl --head --silent --fail "https://raw.githubusercontent.com/hyperledger/fabric-samples/master/test-network/scripts/utils.sh" 2> /dev/null;
+ then
+  source <(curl -sSL "https://raw.githubusercontent.com/hyperledger/fabric-samples/master/test-network/scripts/utils.sh")
+ else
   echo "https://raw.githubusercontent.com/hyperledger/fabric-samples/master/test-network/scripts/utils.sh does not exist, failing, please check to make sure util script is there."
   exit 1
 fi
@@ -69,9 +64,8 @@ function install_fabric_bin {
         chmod +x bin/orderer
         chmod +x bin/peer
     fi
-    export FABRIC_CFG_PATH=$(pwd)/config
-    export PATH=${PATH}:$(pwd)/bin
-    echo "debug: $FABRIC_CFG_PATH"
+    export FABRIC_CFG_PATH=${PWD}/config
+    export PATH=${PATH}:${PWD}
 }
 
 #######################################
