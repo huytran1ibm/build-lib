@@ -13,7 +13,7 @@ export NVM_VERSION=${NVM_VERSION:="0.35.1"}
 export GO_VERSION=${GO_VERSION:="1.13"}
 export GOROOT=${ROOTDIR}/go
 export PATH=${GOROOT}/bin:$PATH
-export GOPATH=${ROOTDIR}
+export GOPATH=${ROOTDIR}/go
 export PATH=${GOPATH}/bin:$PATH
 export ENABLE_PEER_CLI=true
 
