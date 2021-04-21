@@ -17,7 +17,7 @@ $DEBUG && set -x
 
 # Install assert package for GO (needed for testing)
 echo "=> go get assert"
-go get github.com/stretchr/testify/assert
+#go get github.com/stretchr/testify/assert
 
 # Install go-junit-report
 echo "=> go get go-junit-report"
