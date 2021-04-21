@@ -334,10 +334,10 @@ packageCC() {
     verifyPeerEnv
     peer lifecycle chaincode package ${CC_NAME}@${CC_VERSION}.tgz \
         --lang ${LANG} \
-        --label ${LABEL} \
+        --label ${CC_NAME}-${CC_VERSION}-${CC_SEQUENCE} \
         --path ${CC_PATH}
     res=$?
-    verifyResult $res "Chaincode package for ${LABEL}  "
+    verifyResult $res "Chaincode package for ${CC_NAME}-${CC_VERSION}-${CC_SEQUENCE}  "
 }
 
 #######################################
