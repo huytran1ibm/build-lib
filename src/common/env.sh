@@ -11,9 +11,9 @@ export NVM_VERSION=${NVM_VERSION:="0.35.1"}
 
 # set location for go executables
 export GO_VERSION=${GO_VERSION:="1.13"}
-export GOROOT=${GOROOT:-"${ROOTDIR}/go"}
+export GOROOT${ROOTDIR}/go
 export PATH=${GOROOT}/bin:$PATH
-export GOPATH=${GOPATH:-"${ROOTDIR}/go"}
+export GOPATH=${ROOTDIR}
 export PATH=${GOPATH}/bin:$PATH
 export ENABLE_PEER_CLI=true
 
