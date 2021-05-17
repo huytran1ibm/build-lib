@@ -26,8 +26,9 @@ export CC_REPO_DIR=${CC_REPO_DIR:-"${ROOTDIR}/chaincode-repo"}
 export CONFIGPATH=${CONFIGPATH:-"${CC_REPO_DIR}/deploy_config.json"}
 # - only for golang chaincode projects
 export CHAINCODEPATH=${CHAINCODEPATH:-"$CC_REPO_DIR/chaincode"}
-ls CC_REPO_DIR
-ls CHAINCODEPATH
+cd  $CC_REPO_DIR
+ls 
+ls $CHAINCODEPATH
 echo "HLF_VERSION before : $HLF_VERSION"
 # hlf dir
 export HLF_VERSION=${HLF_VERSION:="2.x"}
