@@ -29,10 +29,8 @@ export CHAINCODEPATH=${CHAINCODEPATH:-"$CC_REPO_DIR/chaincode"}
 cd  $CC_REPO_DIR
 ls 
 cd ..
-
-cd  $CHAINCODEPATH
 ls 
-cd ..
+
 echo "HLF_VERSION before : $HLF_VERSION"
 # hlf dir
 export HLF_VERSION=${HLF_VERSION:="2.x"}
