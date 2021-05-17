@@ -36,7 +36,7 @@ cd "${CC_REPO_DIR}"
 #npm version prerelease --preid="${CC_VERSION}"
 cd -
 
-packageCC "${CC_REPO_DIR}" "${CC_NAME}" "${CC_VERSION}" "${CC_SEQUENCE}" "golang"
+packageCC "${CHAINCODEPATH}" "${CC_NAME}" "${CC_VERSION}" "${CC_SEQUENCE}" "golang"
 
 if [[ ! -f "${CC_NAME}@${CC_VERSION}.tgz" ]];then
     fatalln "${CC_NAME}@${CC_VERSION}.tgz not created by packageCC"
