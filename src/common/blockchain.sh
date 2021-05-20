@@ -328,7 +328,7 @@ queryCommitted() {
 packageCC() {
     set -x
     local CC_PATH=$1
-    local CC_NAME=lcn_chain_code
+    local CC_NAME=$2
     local CC_VERSION=$3
     local CC_SEQUENCE=$4
     local LANG=$5  
